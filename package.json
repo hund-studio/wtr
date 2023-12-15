@@ -1,0 +1,46 @@
+{
+	"version": "1.0.0-alpha.113",
+	"name": "@hund-ernesto/wtr",
+	"type": "commonjs",
+	"main": "./src/index.ts",
+	"types": "./declarations/index.d.ts",
+	"bin": {
+		"wtr": "./dist/cli.js"
+	},
+	"peerDependencies": {
+		"axios": "^1.6.2",
+		"html-react-parser": "^5.0.6",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-helmet-async": "^2.0.1",
+		"react-router-dom": "^6.20.0"
+	},
+	"dependencies": {
+		"@types/react-dom": "^18.2.17",
+		"@types/webpack-node-externals": "^3.0.4",
+		"app-root-path": "^3.1.0",
+		"cli-loading-animation": "^1.0.6",
+		"cli-spinners": "^2.9.2",
+		"css-loader": "^6.8.1",
+		"dotenv": "^16.3.1",
+		"mini-css-extract-plugin": "^2.7.6",
+		"sass": "^1.69.5",
+		"sass-loader": "^13.3.2",
+		"ts-loader": "^9.5.1",
+		"tsconfig-paths-webpack-plugin": "^4.1.0",
+		"typescript": "^5.3.2",
+		"usehooks-ts": "^2.9.1",
+		"webpack": "^5.89.0",
+		"webpack-cli": "^5.1.4",
+		"webpack-node-externals": "^3.0.0",
+		"webpack-shebang-plugin": "^1.1.8"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack && npm publish --access public"
+	},
+	"devDependencies": {
+		"chalk": "^4.1.2",
+		"filemanager-webpack-plugin": "^8.0.0"
+	}
+}
