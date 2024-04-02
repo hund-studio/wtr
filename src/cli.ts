@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import "dotenv/config";
+import { cpSync } from "fs";
+import { LoaderActions, loading } from "cli-loading-animation";
 import { merge } from "webpack-merge";
 import { resolve } from "path";
 import { spawn } from "child_process";
@@ -9,20 +11,9 @@ import { webpack, DefinePlugin, Configuration, Stats } from "webpack";
 import appRoot from "app-root-path";
 import chalk from "chalk";
 import cliSpinners from "cli-spinners";
-import { LoaderActions, loading } from "cli-loading-animation";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-
-/**
- * Options
- */
-
-const WP_HOST = process.env.WP_HOST;
-
-if (!WP_HOST) {
-	throw new Error("undefined-env-wp_host"); // TODO Error display
-}
-
-const isDev = process.argv[2] === "dev";
+import WebpackDevServer from "webpack-dev-server";
+import "webpack-dev-server";
 
 /**
  * Handle CLI steps visualization
@@ -34,12 +25,24 @@ interface IStep extends Partial<LoaderActions> {
 	terminate: typeof terminateStep;
 }
 
-type StepKey = "compilation" | "bundling" | "waiting";
+type StepKey =
+	| "configuration"
+	| "initialization"
+	| "compilation"
+	| "bundling"
+	| "waiting"
+	| "serving";
 
 const getStepMessage = (key: StepKey) => {
 	switch (key) {
+		case "initialization":
+			return "Setting up boilerplate...";
+		case "configuration":
+			return "Installing required packages...";
 		case "compilation":
 			return "Generating WP compiler...";
+		case "serving":
+			return "Server started...";
 		case "bundling":
 			return "Generating WP assets...";
 		case "waiting":
@@ -76,9 +79,54 @@ const step: IStep = {
 };
 
 /**
- * Webpack global configuration
+ * Initialization script
  */
 
+const isInit = process.argv[2] === "init";
+
+if (isInit) {
+	triggerStep("initialization");
+
+	cpSync(
+		resolve(appRoot["path"], "node_modules/@hund-ernesto/wtr/init"),
+		resolve(process.cwd(), "website"),
+		{
+			recursive: true,
+		}
+	);
+
+	process.chdir(resolve(process.cwd(), "website"));
+
+	triggerStep("configuration");
+	const { spawnSync } = require("child_process");
+	const npmInstall = spawnSync("npm", ["install"], { stdio: "inherit" });
+
+	if (npmInstall.status === 0) {
+		terminateStep();
+		console.log(chalk.blue("Initialization completed, you are ready to go!"));
+		process.exit();
+	} else {
+		console.error("Error running npm install");
+		process.exit(1);
+	}
+}
+
+/**
+ * Options
+ */
+
+const WP_HOST = process.env.WP_HOST;
+
+if (!WP_HOST) {
+	throw new Error("undefined-env-wp_host"); // TODO Error display
+}
+
+const isServe = process.argv[2] === "start";
+const isDev = isServe || process.argv[2] === "dev";
+
+/**
+ * Webpack global configuration
+ */
 const configuration: Configuration = {
 	mode: isDev ? "development" : "production",
 	devtool: isDev ? "inline-source-map" : "source-map",
@@ -98,7 +146,6 @@ const configuration: Configuration = {
 			},
 			{
 				test: /\.scss$/,
-				// use: ["style-loader", "css-loader", "sass-loader"], // TODO da riattivare assieme alla versione con il serve
 				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
 			},
 			{
@@ -132,6 +179,7 @@ const configuration: Configuration = {
 	},
 	plugins: [
 		new DefinePlugin({
+			MODE: JSON.stringify(isServe ? "serve" : isDev ? "watch" : "build"),
 			PROJECT: JSON.stringify(appRoot["path"]),
 			CORE_WP: JSON.stringify(resolve(appRoot["path"], "node_modules/@hund-ernesto/wtr")),
 			WP_HOST: JSON.stringify(WP_HOST),
@@ -175,8 +223,28 @@ const bundle = webpack(
 			filename: "[name].js",
 			path: resolve(appRoot["path"], "_out/wp-theme/dist"),
 			clean: true,
+			publicPath: isServe ? "/" : undefined,
 		},
+		infrastructureLogging: { level: "error" },
+		stats: "none",
 	})
+);
+
+/**
+ * Webpack server
+ */
+
+const server = new WebpackDevServer(
+	{
+		static: [
+			resolve(appRoot["path"], "node_modules/@hund-ernesto/wtr/server"),
+			resolve(appRoot["path"], "_out/wp-theme/dist"),
+		],
+		compress: true,
+		port: 9000,
+		historyApiFallback: true,
+	},
+	bundle
 );
 
 /**
@@ -233,7 +301,10 @@ const runCompiler = () =>
 const start = () => {
 	step.trigger("compilation");
 
-	if (isDev) {
+	if (isServe) {
+		step.trigger("serving");
+		server.start();
+	} else if (isDev) {
 		compiler.watch({}, webpackErrorHandler);
 	} else {
 		compiler.run(webpackErrorHandler);
@@ -245,7 +316,6 @@ const start = () => {
 		await runCompiler();
 
 		step.trigger("bundling");
-
 		bundle.run(webpackErrorHandler);
 
 		bundle.hooks.done.tap("DoneMessage", async (stats) => {

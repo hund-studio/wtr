@@ -31,7 +31,15 @@ const compiler = async () => {
 		recursive: true,
 	});
 
-	const routes = await getRoutes();
+	cpSync(resolve(PROJECT, "src/theme"), resolve(PROJECT, "_out/wp-theme"), {
+		recursive: true,
+	});
+
+	const routes = await getRoutes()
+		.then((routes) => routes)
+		.catch((error) => {
+			return [];
+		});
 
 	for (const route of routes) {
 		const wpTemplate = generateTemplate(

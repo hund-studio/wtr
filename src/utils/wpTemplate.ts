@@ -1,4 +1,7 @@
-const head = ["<?php get_header(); ?>", "<?php switch(wpreact_get_current_locale()){"].join("");
+const head = [
+	"<?php get_header(); ?>",
+	"<?php switch(WTR_Locale_Utils::get_current_locale()){",
+].join("");
 const foot = ["} ?>", "<?php get_footer(); ?>"].join("");
 
 interface TemplateSectionArgs {

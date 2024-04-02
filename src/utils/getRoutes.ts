@@ -9,9 +9,26 @@ interface Path {
 type Paths = Array<Path>;
 
 export const getRoutes = async () => {
-	const { data: paths } = await axios.get<Paths>(`${WP_HOST}/wp-json/wpreact/v1/registered-paths`);
+	let paths: Paths;
 
-	// esle get by id
+	paths = (() => {
+		try {
+			const innerHTML = document.getElementById("routes")?.["innerHTML"];
+
+			if (!innerHTML) {
+				throw new Error("");
+			}
+
+			return JSON.parse(innerHTML);
+		} catch (e) {
+			return null;
+		}
+	})();
+
+	if (!paths) {
+		const { data } = await axios.get<Paths>(`${WP_HOST}/wp-json/wtr/v1/routes`);
+		paths = data;
+	}
 
 	return (
 		await Promise.all(
@@ -25,7 +42,7 @@ export const getRoutes = async () => {
 								const { default: Template } = await import(`@/src/app/[${template}]/page`);
 								return { template, Template };
 							} catch (error) {
-								console.warn(`"${template}" not found while looking for available templates...`);
+								// Simply ignore
 							}
 						})
 					)
@@ -33,9 +50,8 @@ export const getRoutes = async () => {
 
 				if (template) {
 					return {
+						...template,
 						pathnames,
-						template: templates[0],
-						Template: template["Template"],
 						endpoint,
 					};
 				}

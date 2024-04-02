@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface MenuItem {
@@ -22,6 +23,8 @@ const useMenu = () => {
 			} catch (error) {
 				console.error("Error parsing menu data:", error);
 			}
+		} else {
+			axios.get(`${WP_HOST}/wp-json/wpreact/v1/menu`).then(({ data }) => setData(data));
 		}
 	}, []);
 

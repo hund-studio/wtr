@@ -1,0 +1,15 @@
+{
+	"scripts": {
+		"start": "wtr start",
+		"dev": "wtr dev",
+		"build": "wtr"
+	},
+	"name": "wtr-template",
+	"dependencies": {
+		"@hund-ernesto/wtr": "^1.0.0-alpha.162",
+		"react": "^18.2.0"
+	},
+	"devDependencies": {
+		"@types/react": "^18.2.39"
+	}
+}

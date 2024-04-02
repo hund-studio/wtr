@@ -1,3 +1,4 @@
+declare const MODE: string;
 declare const PROJECT: string;
 declare const CORE_WP: string;
 declare const WP_HOST: string;

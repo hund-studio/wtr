@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface LocaleData {
@@ -18,6 +19,8 @@ const useLocale = () => {
 			} catch (error) {
 				console.error("Error parsing menu data:", error);
 			}
+		} else {
+			axios.get(`${WP_HOST}/wp-json/wpreact/v1/locale`).then(({ data }) => setData(data));
 		}
 	}, []);
 

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface WebsiteData {
@@ -17,6 +18,8 @@ const useSiteInfo = () => {
 			} catch (error) {
 				console.error("Error parsing menu data:", error);
 			}
+		} else {
+			axios.get(`${WP_HOST}/wp-json/wpreact/v1/site-info`).then(({ data }) => setData(data));
 		}
 	}, []);
 

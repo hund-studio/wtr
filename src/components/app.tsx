@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 import { Helmet } from "react-helmet-async";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { RouteArgs } from "../compiler";
 import { useFetch } from "usehooks-ts";
 import parse from "html-react-parser";
@@ -16,11 +16,19 @@ const WordpressHead: FC<{ html: string }> = ({ html }) => {
 	return null;
 };
 
+function replaceSlugWithObject(slug: string | null, replacements: any) {
+	if (!slug) {
+		return undefined;
+	}
+	return slug.replace(/:([^/]+)/g, (match, key) => replacements[key] || match);
+}
+
 const RouteResolver: FC<{
 	endpoint: string;
 	Template: FC<{ data: any; error: any }>;
 }> = ({ endpoint, Template }) => {
-	const { data, error } = useFetch<any>(endpoint);
+	let { slug } = useParams();
+	const { data, error } = useFetch<any>(replaceSlugWithObject(endpoint, { slug }));
 
 	return (
 		<Fragment>
