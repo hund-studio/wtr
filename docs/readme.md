@@ -48,102 +48,64 @@ Here are the plugins directly integrated into WTR that can provide various usefu
 ## Important Notes in No Particular Order
 
 - WTR only works with Typescript, not Javascript. So, if you are not already using it, get on board;
-- Currently, we have not created a create-react-app-style command to generate an initial boilerplate. However, to start, it is sufficient to generate literally 2 files...
 
-## How to Get Started
+## Getting Started
 
-To start using WTR, you will need:
+### Installation
 
-- A local PHP development environment;
-- An installation of WordPress;
-- NodeJS installed on your machine.
+System requirements:
 
-Once these requirements are met, follow these steps:
+- A working installation of WordPress (local or remote);
+- Node.js 18.17 or later.
 
-1. Create the project folder
+### Automatic installation
 
-```bash
-mkdir my-wordpress-theme
-```
-
-2. Start a new project
+We recommend starting a new **wtr** project using the `init` command, which sets up everything automatically for you.
+To create a project, run:
 
 ```bash
-npm init -y
+npx @hund-ernesto/wtr init
 ```
 
-3. Install WTR
+After the prompts, `init` command will create a folder named `website`, install the required dependencies and build the starting theme that you will upload to your Wordpress installation.
 
-```bash
-npm i @hund-ernesto/wtr
-```
+> **Good to know**:
+>
+> - You must upload it like you would normally do for any other Wordpress theme: inside the `wp-content/themes/` directory.
 
-4. Add a `tsconfig.json` file, a `declarations.d.ts` file, and an `.env` file
+#### One last step
 
-```JSON
-// ./tsconfig.json
-{
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "node10",
-		"baseUrl": "./",
-		"strict": true,
-		"esModuleInterop": true,
-		"declaration": false,
-		"skipLibCheck": true,
-		"jsx": "react-jsx",
-		"paths": {
-			"@/*": ["./*"]
-		}
-	}
-}
-```
-
-To prevent TypeScript complaints when importing .jpg .png or similar...
-
-```typescript
-// ./declarations.d.ts
-/// <reference types="@hund-ernesto/wtr/declarations/global" />
-```
-
-To link WTR with WordPress APIs
+Before being able to start you need one additional step: update the generated `.env` file with the URL of your Wordpress installation.
 
 ```dotenv
 # ./env
 WP_HOST="http://yourlocalwordpress.local"
 ```
 
-5. Add the file with the basic layout of your app
+### Run the development server
 
-```typescript
-// ./src/app/layout.tsx
-import { FC, Fragment, PropsWithChildren } from "react";
+**wtr** can run with 2 different modes.
 
-const RootLayout: FC<PropsWithChildren> = ({ children }) => {
-	return (
-		<Fragment>
-			<main>{children}</main>
-		</Fragment>
-	);
-};
+#### Run in watch mode
 
-export default RootLayout;
+Watch mode is useful when developing on a local Wordpress installation.
+You can symlink `_out/wp-theme` to your `/wp-content/themes` and start working on your template.
+
+```bash
+npm run dev
 ```
 
-6. Start creating the necessary WordPress templates
+This mode is suggested if you need to directly work with custom Wordpress functionalities (for example register custom REST endpoints).
 
-```typescript
-// ./src/app/[front-page]/page.tsx
-import { FC, Fragment } from "react";
+#### Run as a Webpack server
 
-export default function Page({ data, error }: any) {
-	return (
-		<Fragment>
-			<h1>Hello World</h1>
-		</Fragment>
-	);
-}
+Serve mode is useful if you have to interact to a remote Wordpress installation with real data on it.
+
+```bash
+npm run start
 ```
 
-Well. The setup is complete, and from here, you can refer to the Wiki for further guides and examples.
+#### Deploying your theme
+
+Ready to publish online? use `npm run build` command to bundle and compile your Wordpress theme.
+You will find your theme inside the `_out` folder in your project root.

@@ -102,9 +102,16 @@ if (isInit) {
 	const npmInstall = spawnSync("npm", ["install"], { stdio: "inherit" });
 
 	if (npmInstall.status === 0) {
-		terminateStep();
-		console.log(chalk.blue("Initialization completed, you are ready to go!"));
-		process.exit();
+		const npmBuild = spawnSync("npm", ["run", "build"], { stdio: "inherit" });
+
+		if (npmBuild.status === 0) {
+			terminateStep();
+			console.log(chalk.blue("Initialization completed, you are ready to go!"));
+			process.exit();
+		} else {
+			console.error("Error running npm run build");
+			process.exit(1);
+		}
 	} else {
 		console.error("Error running npm install");
 		process.exit(1);
