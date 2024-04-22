@@ -1,6 +1,10 @@
 Functionality
-☐ Eliminare /core/wp.old
+✔ Eliminare /core/wp.old @done(24-04-22 18:56)
 ☐ Rivedere nomenclatura delle classi
 
 Release
 ☐ Readme update
+☐ Create the Wiki
+
+Future releases
+☐ Link page prefetch
