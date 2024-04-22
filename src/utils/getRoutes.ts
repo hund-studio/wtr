@@ -16,7 +16,7 @@ export const getRoutes = async () => {
 			const innerHTML = document.getElementById("routes")?.["innerHTML"];
 
 			if (!innerHTML) {
-				throw new Error("");
+				throw new Error();
 			}
 
 			return JSON.parse(innerHTML);
@@ -43,6 +43,7 @@ export const getRoutes = async () => {
 								return { template, Template };
 							} catch (error) {
 								// Simply ignore
+								return;
 							}
 						})
 					)

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 interface MenuItem {
 	label: string;
 	to: string;
+	children?: MenuItem[];
 }
 
 interface MenuData {

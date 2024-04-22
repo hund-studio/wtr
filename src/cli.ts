@@ -42,11 +42,11 @@ const getStepMessage = (key: StepKey) => {
 		case "compilation":
 			return "Generating WP compiler...";
 		case "serving":
-			return "Server started...";
+			return "Server started at http://localhost:9000 ...";
 		case "bundling":
 			return "Generating WP assets...";
 		case "waiting":
-			return "Compilation completed, waiting for file changes...";
+			return "Waiting for file changes...";
 	}
 };
 
@@ -267,24 +267,36 @@ const compiler = webpack(
 
 const runCompiler = () =>
 	new Promise<void>((_resolve, _reject) => {
-		console.log(chalk.magenta("=== Compilation LOG ==="));
-		console.log(chalk.magenta());
-
 		const outputPath = resolve(appRoot["path"], "./.compiler/index.js");
 		const childProcess = spawn("node", [outputPath]);
+		let readableOutput: string[] = [];
 
 		childProcess.stdout.on("data", (data) => {
-			console.log(chalk.white(data));
+			if (data) {
+				const trimmedData = data.toString().trim();
+				readableOutput.push(chalk.white(trimmedData));
+			}
 		});
 
 		childProcess.stderr.on("data", (data) => {
-			console.error(chalk.red(data));
+			if (data) {
+				const trimmedData = data.toString().trim();
+				readableOutput.push(chalk.red(trimmedData));
+			}
 		});
 
 		childProcess.on("close", (code) => {
-			console.log(chalk.magenta());
-			console.log(chalk.magenta("=== LOG END ==="));
-			console.log(chalk.magenta());
+			if (!!readableOutput["length"]) {
+				readableOutput = [
+					chalk.green("✓ Application rendered the following LOGS"),
+					...readableOutput,
+					chalk.green("↥ Application LOG END"),
+				];
+			} else {
+				readableOutput.push(chalk.green("✓ Application rendered without LOGS"));
+			}
+
+			console.log(readableOutput.join("\n"));
 
 			if (code === 0) {
 				_resolve();
@@ -324,7 +336,7 @@ const start = () => {
 			if (isDev) {
 				step.trigger("waiting");
 			} else {
-				console.log(chalk.blue("Compilation completed, you are ready to go!"));
+				console.log(chalk.green("✓ Compilation completed, you are ready to go!"));
 			}
 		});
 	});

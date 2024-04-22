@@ -32,9 +32,16 @@ module.exports = [
 			new ShebangPlugin(),
 			new FileManagerPlugin({
 				events: {
-					onStart: {},
+					onStart: {
+						delete: ["./declarations/"],
+					},
 					onEnd: {
-						copy: [{ source: "./src/global.d.ts", destination: "./declarations/global.d.ts" }],
+						copy: [
+							{ source: "./src/global.d.ts", destination: "./declarations/global.d.ts" },
+							{ source: "./declarations/src/**/*", destination: "./declarations/" },
+							{ source: "./declarations/init/src/**/*", destination: "./declarations/init" },
+						],
+						delete: ["./declarations/init/src", "./declarations/src"],
 					},
 				},
 				runTasksInSeries: false,

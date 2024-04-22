@@ -2,7 +2,6 @@
 
 function get_menu_items_by_registered_slug($menu_slug)
 {
-
     $menu_items = array();
 
     if (($locations = get_nav_menu_locations()) && isset($locations[$menu_slug])) {
@@ -11,6 +10,32 @@ function get_menu_items_by_registered_slug($menu_slug)
     }
 
     return $menu_items;
+}
+
+function format_menu_item($item, $menu_items)
+{
+    $url = $item->url;
+
+    if (strpos($url, home_url()) === 0) {
+        $url = str_replace(home_url(), '', $url);
+    }
+
+    $formatted_item = array(
+        'label' => $item->title,
+        'to' => $url,
+    );
+
+    $children = array_filter($menu_items, function ($menu_item) use ($item) {
+        return $menu_item->menu_item_parent == $item->ID;
+    });
+
+    if (!empty($children)) {
+        $formatted_item['children'] = array_values(array_map(function ($child) use ($menu_items) {
+            return format_menu_item($child, $menu_items);
+        }, $children));
+    }
+
+    return $formatted_item;
 }
 
 function wpreact_get_menu_output()
@@ -22,17 +47,12 @@ function wpreact_get_menu_output()
         $menu_items = get_menu_items_by_registered_slug($menu_location);
         $formatted_items = array();
 
-        foreach ($menu_items as $item) {
-            $url = $item->url;
+        $root_items = array_filter($menu_items, function ($item) {
+            return $item->menu_item_parent == 0;
+        });
 
-            if (strpos($url, home_url()) === 0) {
-                $url = str_replace(home_url(), '', $url);
-            }
-
-            $formatted_items[] = array(
-                'label' => $item->title,
-                'to' => $url,
-            );
+        foreach ($root_items as $item) {
+            $formatted_items[] = format_menu_item($item, $menu_items);
         }
 
         $output[$menu_location] = $formatted_items;
