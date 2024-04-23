@@ -25,7 +25,7 @@ const useMenu = () => {
 				console.error("Error parsing menu data:", error);
 			}
 		} else {
-			axios.get(`${WP_HOST}/wp-json/wpreact/v1/menu`).then(({ data }) => setData(data));
+			axios.get(`${WP_HOST}/wp-json/wtr/v1/menu`).then(({ data }) => setData(data));
 		}
 	}, []);
 

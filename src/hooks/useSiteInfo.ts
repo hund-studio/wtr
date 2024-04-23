@@ -19,7 +19,7 @@ const useSiteInfo = () => {
 				console.error("Error parsing menu data:", error);
 			}
 		} else {
-			axios.get(`${WP_HOST}/wp-json/wpreact/v1/site-info`).then(({ data }) => setData(data));
+			axios.get(`${WP_HOST}/wp-json/wtr/v1/site-info`).then(({ data }) => setData(data));
 		}
 	}, []);
 
