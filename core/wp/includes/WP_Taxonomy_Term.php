@@ -4,7 +4,7 @@
     List here todo for this file
  */
 
-class WTR_WP_Taxonomy_Term
+class WP_Taxonomy_Term
 {
     public string $url;
     private ?\WP_Term $sample_term;

@@ -1,6 +1,6 @@
 <?php
 
-class WTR_WP_Taxonomy_Reader
+class WP_Taxonomy_Reader
 {
     public static function get_registered()
     {
@@ -20,7 +20,7 @@ class WTR_WP_Taxonomy_Reader
         return get_taxonomy($taxonomy);
     }
 
-    public static function get_wtr_term(string $taxonomy): ?WTR_WP_Taxonomy_Term
+    public static function get_wtr_term(string $taxonomy): ?WP_Taxonomy_Term
     {
         try {
             $wp_object = self::get_wp_object($taxonomy);
@@ -29,7 +29,7 @@ class WTR_WP_Taxonomy_Reader
                 throw new RuntimeException("Resource not found.");
             }
 
-            return new WTR_WP_Taxonomy_Term($wp_object);
+            return new WP_Taxonomy_Term($wp_object);
 
             // return WTR_Array_Utils::clean($list); // TODO check if other occurrencies before delete
         } catch (Exception $exception) {

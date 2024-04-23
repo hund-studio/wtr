@@ -9,7 +9,6 @@ class WTR_Theme_Setup
         $this->register_bloginfo();
         $this->register_menu();
         $this->register_routes();
-        require get_template_directory() . '/includes/endpoint.php';
         include get_template_directory() . '/includes/user/index.php';
     }
 
@@ -69,7 +68,7 @@ class WTR_Theme_Setup
             Check HP
              */
 
-            $wtr_front_page = new WTR_Front_Page();
+            $wtr_front_page = new WP_Front_Page();
 
             if ($wtr_front_page->is_active) {
                 WTR_Route_Collection::self()->push([
@@ -79,7 +78,7 @@ class WTR_Theme_Setup
                 ]);
             }
 
-            $wtr_home = new WTR_Home();
+            $wtr_home = new WP_Home();
 
             if ($wtr_home->is_active) {
                 WTR_Route_Collection::self()->push([
@@ -93,11 +92,11 @@ class WTR_Theme_Setup
             Check registered PT
              */
 
-            $registered_post_types = WTR_WP_Post_Type_Reader::get_viewable();
+            $registered_post_types = WP_Post_Type_Reader::get_viewable();
 
             foreach ($registered_post_types as $registered_post_type) {
-                $wtr_archive = WTR_WP_Post_Type_Reader::get_wtr_archive($registered_post_type);
-                $wtr_post = WTR_WP_Post_Type_Reader::get_wtr_post($registered_post_type);
+                $wtr_archive = WP_Post_Type_Reader::get_wtr_archive($registered_post_type);
+                $wtr_post = WP_Post_Type_Reader::get_wtr_post($registered_post_type);
 
                 if (!empty($wtr_archive)) {
                     WTR_Route_Collection::self()->push([
@@ -120,10 +119,10 @@ class WTR_Theme_Setup
             Check registered TAX
              */
 
-            $registered_taxonomies = WTR_WP_Taxonomy_Reader::get_viewable();
+            $registered_taxonomies = WP_Taxonomy_Reader::get_viewable();
 
             foreach ($registered_taxonomies as $registered_taxonomy) {
-                $wtr_term = WTR_WP_Taxonomy_Reader::get_wtr_term($registered_taxonomy);
+                $wtr_term = WP_Taxonomy_Reader::get_wtr_term($registered_taxonomy);
 
                 if (!empty($wtr_term)) {
                     WTR_Route_Collection::self()->push([

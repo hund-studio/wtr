@@ -1,6 +1,6 @@
 <?php
 
-class WTR_WP_Post_Type_Post
+class WP_Post_Type_Post
 {
     public string $url;
     private ?\WP_Post $sample_post;

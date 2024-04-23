@@ -1,6 +1,6 @@
 <?php
 
-class WTR_Home
+class WP_Home
 {
     public bool $is_active = false;
     private ?int $page_id = null;
@@ -48,7 +48,7 @@ class WTR_Home
 
     public function get_wtr_endpoint()
     {
-        $wp_post_type = WTR_WP_Post_Type_Reader::get_wp_object('post');
+        $wp_post_type = WP_Post_Type_Reader::get_wp_object('post');
         $wp_rest_namespace = $wp_post_type->rest_namespace ?? WTR_Config_Utils::$wp_api_namespace;
         $wp_rest_base = $wp_post_type->rest_base ?? $wp_post_type->name;
 

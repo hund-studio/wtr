@@ -10,12 +10,12 @@ spl_autoload_register(function ($class_name) {
 });
 
 /* Autoload WTR Functions */
-
-$dir = opendir(__DIR__ . '/functions/');
+$path = __DIR__ . '/includes/functions/';
+$dir = opendir($path);
 while (($file = readdir($dir)) !== false) {
     if ($file != '.' && $file != '..') {
-        if (is_file($folder . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) == 'php') {
-            require_once $folder . '/' . $file;
+        if (is_file($path . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) == 'php') {
+            require_once $path . '/' . $file;
         }
     }
 }

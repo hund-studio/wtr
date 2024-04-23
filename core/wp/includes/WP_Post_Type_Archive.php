@@ -1,6 +1,6 @@
 <?php
 
-class WTR_WP_Post_Type_Archive
+class WP_Post_Type_Archive
 {
     public string $url; // TODO do i really need this?
 

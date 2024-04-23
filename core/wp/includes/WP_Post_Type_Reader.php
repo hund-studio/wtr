@@ -1,6 +1,6 @@
 <?php
 
-class WTR_WP_Post_Type_Reader
+class WP_Post_Type_Reader
 {
     public static function get_registered()
     {
@@ -20,7 +20,7 @@ class WTR_WP_Post_Type_Reader
         return get_post_type_object($post_type);
     }
 
-    public static function get_wtr_archive(string $post_type): ?WTR_WP_Post_Type_Archive
+    public static function get_wtr_archive(string $post_type): ?WP_Post_Type_Archive
     {
         try {
             $wp_object = self::get_wp_object($post_type);
@@ -29,13 +29,13 @@ class WTR_WP_Post_Type_Reader
                 throw new RuntimeException("Resource not found.");
             }
 
-            return new WTR_WP_Post_Type_Archive($wp_object);
+            return new WP_Post_Type_Archive($wp_object);
         } catch (Exception $exception) {
             return null;
         }
     }
 
-    public static function get_wtr_post(string $post_type): ?WTR_WP_Post_Type_Post
+    public static function get_wtr_post(string $post_type): ?WP_Post_Type_Post
     {
         try {
             $wp_object = self::get_wp_object($post_type);
@@ -44,7 +44,7 @@ class WTR_WP_Post_Type_Reader
                 throw new RuntimeException("Resource not found.");
             }
 
-            return new WTR_WP_Post_Type_Post($wp_object);
+            return new WP_Post_Type_Post($wp_object);
             // return WTR_Array_Utils::clean($list); // TODO check if other occurrencies before delete
         } catch (Exception $exception) {
             return null;
