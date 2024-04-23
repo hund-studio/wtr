@@ -1,6 +1,6 @@
 <?php
 
-class WTR_Config
+class WTR_Config_Utils
 {
     public static string $wtr_api_namespace = 'wtr/v1';
     public static string $wp_api_namespace = 'wp/v2';

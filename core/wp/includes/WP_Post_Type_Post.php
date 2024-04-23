@@ -1,24 +1,20 @@
 <?php
 
-/** TODO:
-    List here todo for this file
- */
-
-class WTR_WP_Taxonomy_Term
+class WTR_WP_Post_Type_Post
 {
     public string $url;
-    private ?\WP_Term $sample_term;
+    private ?\WP_Post $sample_post;
 
-    public function __construct(private \WP_Taxonomy $wp_object)
+    public function __construct(private \WP_Post_Type $wp_object)
     {
-        $terms = get_terms(['taxonomy' => $wp_object->name, 'hide_empty' => false]);
+        $posts = get_posts(['post_type' => $wp_object->name, 'numberposts' => -1]);
 
-        if (empty($terms)) {
+        if (empty($posts)) {
             throw new RuntimeException("Resource not found.");
         }
 
-        $this->sample_term = $terms[0];
-        $url = get_term_link($this->sample_term);
+        $this->sample_post = $posts[0];
+        $url = get_permalink($this->sample_post->ID);
 
         if (empty($url)) {
             throw new RuntimeException("Resource not found.");
@@ -30,6 +26,7 @@ class WTR_WP_Taxonomy_Term
         );
     }
 
+    // TODO this is the same as archive
     public function get_pathnames()
     {
         $pathnames['default'] = WTR_URL_Utils::get_pathname_from_url($this->url);
@@ -42,7 +39,7 @@ class WTR_WP_Taxonomy_Term
         }
 
         foreach ($pathnames as $lang => $url) {
-            $new_url = str_replace($this->sample_term->slug, ':slug', $url);
+            $new_url = str_replace($this->sample_post->post_name, ':slug', $url);
             $pathnames[$lang] = $new_url;
         }
 
@@ -52,41 +49,35 @@ class WTR_WP_Taxonomy_Term
     public function get_templates()
     {
         switch ($this->wp_object->name) {
-            case 'category':
-                $templates[] = "category-{slug}";
-                $templates[] = "category";
-                break;
-            case 'tag':
-                $templates[] = "tag-{slug}";
-                $templates[] = "tag";
+            case 'page':
+                $templates[] = "page-{slug}";
+                $templates[] = "page";
                 break;
             default:
-                $templates[] = sprintf("taxonomy-%s-{slug}", $this->wp_object->name);
-                $templates[] = sprintf("taxonomy-%s", $this->wp_object->name);
+                $templates[] = sprintf("single-%s-{slug}", $this->wp_object->name);
+                $templates[] = sprintf("single-%s", $this->wp_object->name);
                 $templates[] = "single";
         }
-
-        $templates[] = "archive";
 
         return $templates;
     }
 
     public function get_wtr_endpoint()
     {
-        $wp_rest_namespace = $this->wp_object->rest_namespace ?? WTR_Config::$wp_api_namespace;
+        $wp_rest_namespace = $this->wp_object->rest_namespace ?? WTR_Config_Utils::$wp_api_namespace;
         $wp_rest_base = $this->wp_object->rest_base ?? $this->wp_object->name;
 
         return new WTR_API_Endpoint([
-            'pattern' => WTR_Config::get_api_url() . WTR_URL_Utils::join(WTR_Config::$wtr_api_namespace, $wp_rest_base, ':slug'),
+            'pattern' => WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join(WTR_Config_Utils::$wtr_api_namespace, $wp_rest_base, ':slug'),
             'pathname' =>  WTR_URL_Utils::join($wp_rest_base, '(?P<slug>[\w-]+)'),
             'callback' => function (WP_REST_Request $request) use ($wp_rest_namespace, $wp_rest_base) {
                 // TODO clean this callback
                 $slug = $request['slug'];
-                $term = get_term_by('slug', $slug, $this->wp_object->name);
-                $wp_default_endpoint = WTR_Config::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base, $term->ID);
+                $post = get_page_by_path($slug, OBJECT, $this->wp_object->name);
+                $wp_default_endpoint = WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base, $post->ID);
                 $wp_default_endpoint = add_query_arg(['_acf' => 'acf', 'acf_format' => 'standard'], $wp_default_endpoint);
 
-                if (!empty($term)) {
+                if (!empty($post)) {
                     $response =  wp_remote_get($wp_default_endpoint);
                     if (is_array($response) && !is_wp_error($response) && $response['response']['code'] == 200) {
                         $body = wp_remote_retrieve_body($response);

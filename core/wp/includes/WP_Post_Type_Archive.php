@@ -46,15 +46,15 @@ class WTR_WP_Post_Type_Archive
 
     public function get_wtr_endpoint()
     {
-        $wp_rest_namespace = $this->wp_object->rest_namespace ?? WTR_Config::$wp_api_namespace;
+        $wp_rest_namespace = $this->wp_object->rest_namespace ?? WTR_Config_Utils::$wp_api_namespace;
         $wp_rest_base = $this->wp_object->rest_base ?? $this->wp_object->name;
 
         return new WTR_API_Endpoint([
-            'pattern' => WTR_Config::get_api_url() . WTR_URL_Utils::join(WTR_Config::$wtr_api_namespace, $wp_rest_base),
+            'pattern' => WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join(WTR_Config_Utils::$wtr_api_namespace, $wp_rest_base),
             'pathname' => $wp_rest_base,
             'callback' => function (WP_REST_Request $request) use ($wp_rest_namespace, $wp_rest_base) {
                 // TODO clean this callback
-                $wp_default_endpoint = WTR_Config::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base);
+                $wp_default_endpoint = WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base);
                 $wp_default_endpoint = add_query_arg(['_acf' => 'acf', 'acf_format' => 'standard'], $wp_default_endpoint);
                 $response =  wp_remote_get($wp_default_endpoint);
                 if (is_array($response) && !is_wp_error($response) && $response['response']['code'] == 200) {

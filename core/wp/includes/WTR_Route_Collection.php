@@ -1,8 +1,8 @@
 <?php
 
-class WTR_Routes_Collection
+class WTR_Route_Collection
 {
-    private static ?WTR_Routes_Collection $instance = null;
+    private static ?WTR_Route_Collection $instance = null;
     private static array $collection = [];
 
     public static function self()

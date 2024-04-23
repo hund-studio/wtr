@@ -1,6 +1,6 @@
 <?php
 
-class WTR_WP_Utils
+class WP_Utils
 {
     public static function append_as_json(string $id, $payload)
     {
@@ -35,5 +35,12 @@ class WTR_WP_Utils
         }
 
         return $options;
+    }
+
+    public static function get_site_info()
+    {
+        return [
+            'rest_url' => get_rest_url()
+        ];
     }
 }

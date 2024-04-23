@@ -29,7 +29,7 @@ class WTR_API_Endpoint
         // spawn Wordpress functions
         add_action('rest_api_init', function () {
             register_rest_route(
-                WTR_Config::$wtr_api_namespace,
+                WTR_Config_Utils::$wtr_api_namespace,
                 $this->pathname,
                 [
                     'method' => $this->method,

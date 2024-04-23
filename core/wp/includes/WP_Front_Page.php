@@ -7,7 +7,7 @@ class WTR_Front_Page
 
     public function __construct()
     {
-        $front_page_type_options = WTR_WP_Utils::get_front_page_type_options();
+        $front_page_type_options = WP_Utils::get_front_page_type_options();
 
         if (array_key_exists('page', $front_page_type_options)) {
             $this->page_id = $front_page_type_options['page'];
@@ -18,7 +18,7 @@ class WTR_Front_Page
     public function get_pathnames()
     {
         $pathnames['default'] = WTR_URL_Utils::get_pathname_from_url(
-            WTR_Config::get_front_page_url()
+            WTR_Config_Utils::get_front_page_url()
         );
 
         foreach (WTR_Locale_Utils::get_locales() as $locale) {
@@ -44,16 +44,16 @@ class WTR_Front_Page
     {
         $post = get_post($this->page_id);
         $wp_post_type = WTR_WP_Post_Type_Reader::get_wp_object($post->post_type);
-        $wp_rest_namespace = $wp_post_type->rest_namespace ?? WTR_Config::$wp_api_namespace;
+        $wp_rest_namespace = $wp_post_type->rest_namespace ?? WTR_Config_Utils::$wp_api_namespace;
         $wp_rest_base = $wp_post_type->rest_base ?? $wp_post_type->name;
 
         if ($post) {
             return new WTR_API_Endpoint([
-                'pattern' => WTR_Config::get_api_url() . WTR_URL_Utils::join(WTR_Config::$wtr_api_namespace, $wp_rest_base, $post->post_name),
+                'pattern' => WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join(WTR_Config_Utils::$wtr_api_namespace, $wp_rest_base, $post->post_name),
                 'pathname' =>  WTR_URL_Utils::join($wp_rest_base, $post->post_name),
                 'callback' => function (WP_REST_Request $request) use ($post, $wp_rest_namespace, $wp_rest_base, $wp_post_type) {
                     // TODO clean this callback
-                    $wp_default_endpoint = WTR_Config::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base, $post->ID);
+                    $wp_default_endpoint = WTR_Config_Utils::get_api_url() . WTR_URL_Utils::join($wp_rest_namespace, $wp_rest_base, $post->ID);
                     $wp_default_endpoint = add_query_arg(['_acf' => 'acf', 'acf_format' => 'standard'], $wp_default_endpoint);
 
                     if (!empty($post)) {
