@@ -10,6 +10,10 @@ class WTR_Theme_Setup
         $this->register_menu();
         $this->register_routes();
         include get_template_directory() . '/includes/user/index.php';
+
+        // TODO make a function here
+        // Append template info
+        WP_Utils::append_as_json('template', get_page_template());
     }
 
     private function include_wtr_dist()

@@ -8,7 +8,7 @@
 		"esModuleInterop": true,
 		"declaration": false,
 		"skipLibCheck": true,
-		"jsx": "react-jsx",
+		"jsx": "preserve",
 		"paths": {
 			"@/*": ["./*"]
 		}

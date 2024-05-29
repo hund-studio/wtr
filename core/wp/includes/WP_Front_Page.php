@@ -18,7 +18,10 @@ class WP_Front_Page
     public function get_pathnames()
     {
         $pathnames['default'] = WTR_URL_Utils::get_pathname_from_url(
-            WTR_Config_Utils::get_front_page_url()
+            WTR_Locale_Utils::get_localized_url(
+                WTR_Config_Utils::get_front_page_url(),
+                WTR_Locale_Utils::get_default_locale()
+            )
         );
 
         foreach (WTR_Locale_Utils::get_locales() as $locale) {

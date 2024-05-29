@@ -2,6 +2,15 @@ Functionality
 ✔ Eliminare /core/wp.old @done(24-04-22 18:56)
 ✔ Rivedere nomenclatura delle classi @done(24-04-23 11:47)
 
+Ongoing (more in docs/ongoing.md)
+✔ Link page prefetch @done(24-05-23 09:30)
+✔ History back @done(24-05-23 10:13)
+☐ Wordpress should pass first set of data as json at least template if not full endpoint (https://developer.wordpress.org/reference/functions/get_page_template_slug/)
+☐ Wordpress shoul dbe able to get endpoint data using current page get_post_type and search between available Post_Type_Archive
+
+Config
+✔ change preserve in default tsconfig when using init @done(24-05-22 19:30)
+
 To test
 ☐ 
 
@@ -10,4 +19,4 @@ Release
 ☐ Create the Wiki
 
 Future releases
-☐ Link page prefetch
+☐

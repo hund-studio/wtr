@@ -1,3 +1,4 @@
 import { FC, PropsWithChildren } from "react";
-import { LinkProps } from "react-router-dom";
-export declare const Link: FC<PropsWithChildren<LinkProps>>;
+export declare const Link: FC<PropsWithChildren<JSX.IntrinsicElements["a"] & {
+    callback?: () => Promise<void> | void;
+}>>;
